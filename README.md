@@ -69,9 +69,9 @@ flow start YoFlow target: [NODE_NAME], for example *PartyB*
 ```
 Please note that the names of the parties are *PartyA*, *PartyB* and *PartyC*, these are the Nodes X500 names and should not be confused with the directory names which are all lower case.  
 
-At this point you may consider logging in to another Node and sending a Yo to PartyA as well.  
+At this point you may consider logging in to another Node (party c) and sending a Yo to PartyB as well.  
 
-In order to inspect if you have received a Yo from another Node, you can execute the following command:  
+In order to inspect if you have received a Yo from another Node, you should log in to party b using the ssh command from above just having the port number incremented. After that, you can execute the following command:  
 ```
 run vaultQuery contractStateType: net.corda.yo.YoState
 ```
@@ -115,3 +115,4 @@ otherResults: []
 At this point we have successfully executed a flow between multiple Nodes on the newly created test network!  
 
 Please feel free and try other CorDapps at this point instead of the simple Yo-app.  
+[Corda samples](https://github.com/corda/samples)
