@@ -1,71 +1,80 @@
-# corda-kubernetes-yo
 # Corda Kubernetes deployment network for developers using Docker
 
-In this example we are using the built-in Kubernetes that comes with Docker for Windows.
-If Kubernetes is not the wanted stack, just removing `--orchestrator=kubernetes` from the calls will deploy it in a docker stack instead.
+In this example we are using the built-in Kubernetes that comes with Docker for Windows.  
+If Kubernetes is not the wanted stack, just removing `--orchestrator=kubernetes` from the calls will deploy it in a docker stack instead.  
 
+## Related
+Network map, Identity Service and non-validating Notary: https://github.com/roastario/spring-boot-network-map  
+Yo! CorDapp repository: https://github.com/corda/samples/tree/release-V3/yo-cordapp  
 
 ## Let us review the contents of this repository.
 
-This folder contains a setup for distributing 3 nodes(party-a, party-b and party-c) in a network which includes an auto-accept Identity Service, a network map and a non-validating Notary.
-There is a script file that fetches the Corda Opensource 4.0 binaries, which is a required first step: *fetch_corda_jar*
-The folder contains a helpful script named *build-docker-nodes* which illustrates how to deploy this network in a Kubernetes environment.
+This folder contains a setup for distributing 3 nodes(party-a, party-b and party-c) in a network which includes an auto-accept Identity Service, a network map and a non-validating Notary.  
+There is a script file that fetches the Corda Opensource 4.0 binaries, which is a required first step: *fetch_corda_jar*  
+The folder contains a helpful script named *build-docker-nodes* which illustrates how to deploy this network in a Kubernetes environment.  
 
-**NOTE!** 
-If your git client retrieves .sh files with \r\n endings they have to be manually replaced with just \n endings or the script file cannot be executed.
-This applies to _all_ *.sh files in all sub-directories as well.
+**NOTE!**   
+If your git client retrieves .sh files with \r\n endings they have to be manually replaced with just \n endings or the script file cannot be executed.  
+This applies to _all_ *.sh files in all sub-directories as well.  
 
+## Usage  
+Let us review the commands that are used to set up the Docker images and then to deploy the stack to Kubernetes.  
 
-The essential commands are:
-**Remove any existing yo-app stacks.**
+The following commands can be found in the *build-docker-nodes* script file as well, where it will run the commands in the correct order.  
+But let us review the commands and what they do:  
+**Remove any existing yo-app stacks.**  
 ```
 docker stack rm yo-app --orchestrator=kubernetes
 ```
 
-**Compiles the Docker images from the sub folders**
+**Compiles the Docker images from the sub folders**  
 ```
-docker build .\party-a\. -t party-a
-docker build .\party-b\. -t party-b
-docker build .\party-c\. -t party-c
-```
-
-**Deploy the stack**
-```
-docker stack deploy yo-app --compose-file .\docker-compose.yml --orchestrator=kubernetes
+docker build ./party-a/. -t party-a
+docker build ./party-b/. -t party-b
+docker build ./party-c/. -t party-c
 ```
 
-After it has been deployed, use this command to check that it is up and running:
+**Deploy the stack**  
+```
+docker stack deploy yo-app --compose-file ./docker-compose.yml --orchestrator=kubernetes  
+```
+
+After it has been deployed, use this command to check that it is up and running:  
 ```
 docker stack ps yo-app --orchestrator=kubernetes
 ```
 
-From the above command you can also get the containers id and feed it into this command to view the output:
+From the above command you can also get the containers id and feed it into this command to view the output:  
 ```
 docker service logs -f <CONTAINER>
 ```
 
-The nodes also have SSH access to the Crash shell, which allows you to execute any flows directly on the nodes.
-Currently they can be accessed with username: **user1** and password: **test**, with the following command:
+The nodes also have SSH access to the Crash shell, which allows you to execute any flows directly on the nodes.    
+Currently they can be accessed with username: **user1** and password: **test**, with the following command:  
 ```
 ssh -o StrictHostKeyChecking=no user1@localhost -o UserKnownHostsFile=/dev/null -p 2221
 ```
-Please note that the depending on which port number you select, you will connect to *party-a(2221)*, *party-b(2222)* or *party-c(2223)*.
+**Note!**
+In case you get an error that the connection was refused(`ssh: connect to host localhost port 2221: Connection refused`), please retry after about one minute, because until that point the Node is not yet fully operational.  
+If you want to make sure it is ready before executing the ssh connect command, you can use the logs command mentioned above and wait until it is ready first.  
+
+Please also note that depending on which port number you select, you will connect to *party-a(2221)*, *party-b(2222)* or *party-c(2223)*.  
 
 
-Once in the Node Shell, you can initiate a YO Flow by running the following command:
+Once in the Node Shell, you can initiate a Yo Flow by running the following command:  
 ```
 flow start YoFlow target: [NODE_NAME], for example *PartyB*
 ```
-Please note that the names of the parties are *PartyA*, *PartyB* and *PartyC*, these are the Nodes X500 names and should not be confused with the directory names which are all lower case.
+Please note that the names of the parties are *PartyA*, *PartyB* and *PartyC*, these are the Nodes X500 names and should not be confused with the directory names which are all lower case.  
 
-At this point you may consider logging in to another Node and sending a Yo to PartyA as well.
+At this point you may consider logging in to another Node and sending a Yo to PartyA as well.  
 
-In order to inspect if you have received a Yo from another Node, you can execute the following command:
+In order to inspect if you have received a Yo from another Node, you can execute the following command:  
 ```
 run vaultQuery contractStateType: net.corda.yo.YoState
 ```
 
-It should at this point list something similar to this:
+It should at this point list something similar to this:  
 ```
 states:
 - state:
@@ -101,6 +110,6 @@ stateTypes: "UNCONSUMED"
 otherResults: []
 ```
 
-At this point we have successfully executed a flow between multiple Nodes on the newly created test network!
+At this point we have successfully executed a flow between multiple Nodes on the newly created test network!  
 
-Please feel free and try other CorDapps at this point instead of the simple Yo-app.
+Please feel free and try other CorDapps at this point instead of the simple Yo-app.  
