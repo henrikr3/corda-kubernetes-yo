@@ -6,11 +6,13 @@ If Kubernetes is not the wanted stack, just removing `--orchestrator=kubernetes`
 ## Related
 Network map, Identity Service and non-validating Notary: https://github.com/roastario/spring-boot-network-map  
 Yo! CorDapp repository: https://github.com/corda/samples/tree/release-V3/yo-cordapp  
+Corda: https://www.corda.net/  
+Corda documentation: https://docs.corda.net/  
 
 ## Let us review the contents of this repository.
 
-This folder contains a setup for distributing 3 nodes(party-a, party-b and party-c) in a network which includes an auto-accept Identity Service, a network map and a non-validating Notary.  
-There is a script file that fetches the Corda Opensource 4.0 binaries, which is a required first step: *fetch_corda_jar*  
+This folder contains a setup for distributing 3 [nodes](https://docs.corda.net/key-concepts-node.html)(party-a, party-b and party-c) in a network which includes an auto-accept Identity Service, a network map and a non-validating Notary.  
+There is a script file that fetches the Corda Opensource 4.0 binaries (Source at: https://github.com/corda/corda), which is a required first step: *fetch_corda_jar*  
 The folder contains a helpful script named *build-docker-nodes* which illustrates how to deploy this network in a Kubernetes environment.  
 
 **NOTE!**   
@@ -20,8 +22,8 @@ This applies to _all_ *.sh files in all sub-directories as well.
 ## Usage  
 Let us review the commands that are used to set up the Docker images and then to deploy the stack to Kubernetes.  
 
-The following commands can be found in the *build-docker-nodes* script file as well, where it will run the commands in the correct order.  
-But let us review the commands and what they do:  
+The following commands can be found in the *build-docker-nodes* script file as well, where it will run the commands in the correct order. But let us review the commands and what they do.  
+
 **Remove any existing yo-app stacks.**  
 ```
 docker stack rm yo-app --orchestrator=kubernetes
@@ -49,7 +51,7 @@ From the above command you can also get the containers id and feed it into this 
 docker service logs -f <CONTAINER>
 ```
 
-The nodes also have SSH access to the Crash shell, which allows you to execute any flows directly on the nodes.    
+The nodes also have SSH access to the [Node shell](https://docs.corda.net/shell.html), which allows you to execute any [flows](https://docs.corda.net/key-concepts-flows.html) directly on the nodes.    
 Currently they can be accessed with username: **user1** and password: **test**, with the following command:  
 ```
 ssh -o StrictHostKeyChecking=no user1@localhost -o UserKnownHostsFile=/dev/null -p 2221
